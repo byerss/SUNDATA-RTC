@@ -38,9 +38,11 @@ RTC_DS1307 rtc;
   char buffer[] = "0";
 
   
+//CREATE LOCAL TABLE OF SUN DATA HERE: http://aa.usno.navy.mil/data/docs/RS_OneYear.php
+//USE 2016 OR OTHER LEAP YEAR SO FEB. 29 HAS DATA
 //ALL TIMES PACIFIC STANDARD TIME - DOES NOT ACCOUT FOR DAYLIGHT SAVINGS 
-//SUNSET DATA FOR TIGARD, OR
 
+//SUNSET DATA FOR TIGARD, OR
 FLASH_TABLE(int, sunSet, 31,
     {1638,1639,1640,1641,1642,1643,1644,1646,1647,1648,1649,1650,1651,1653,1654,1655,1657,1658,1659,1701,1702,1703,1705,1706,1707,1709,1710,1712,1713,1715,1716},
     {1717,1719,1720,1722,1723,1725,1726,1728,1729,1731,1732,1733,1735,1736,1738,1739,1741,1742,1744,1745,1746,1748,1749,1751,1752,1753,1755,1756,1758},
@@ -236,15 +238,22 @@ else {
 }
 
 
- 
-   if ( (nowTime - setTime) >= 0 )
+ //TURN ON BETWEEN 30 MINS BEFORE SUNSET AND 11PM (23 HOURS * 60 MINS = 1380)
+    if ( (nowAbs - setAbs) >= -30 && (nowAbs) <= 1380 )
    {
      digitalWrite(led, HIGH);
    }
+   
+//TURN ON BETWEEN 6:30 AM (6.5 * 60 = 390) UNTIL 30 MINS AFTER SUNRISE
+   else if ( (nowAbs - riseAbs) <= 30 && (nowAbs) >= 390 )
+   {
+      digitalWrite(led, HIGH);
+   }
+   
+   
    else {
       digitalWrite(led, LOW); 
-  
-  }
+    }
    
   
     delay(5000);
